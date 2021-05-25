@@ -44,7 +44,7 @@ Ship.prototype.createCard = function () {
   cardDescription.className = 'card-text';
   cardBody.append(cardDescription);
   let cardButton = document.createElement('button');
-  cardButton.textContent = `Start Building(${this.timeRequired} sec required)`;
+  cardButton.textContent = `Start Building (${this.timeRequired / 1000}s required)`;
   cardButton.id = `btn-${this.shipName}`;
   cardButton.className = 'btn btn-primary';
   cardBody.append(cardButton);
