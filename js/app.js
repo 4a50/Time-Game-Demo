@@ -51,14 +51,26 @@ Ship.prototype.createCard = function () {
   column.append(card)
   return column;
 }
-function buildShip(ship) {
+function shipBuildStart(name) {
+  for (let i = 0; i < ships.length; i++) {
+    if (ships[i].shipName === name) {
+      console.log(`Found ${ships[i].shipName}`);
+      ships[i].timeStamp = Date.now() + ships[i].timeRequired;
+      console.log(`Time Stamp: ${ships[i].timeStamp} Current Time: ${currentTime} Difference: ${ships[i].timeStamp - currentTime}`);
+      ships[i].timer = setInterval(shipBuild, 1000, ships[i]);
+      return
+    }
+    console.log("Ship Not Found");
+  }
+}
+function shipBuild(ship) {
   //debugger;
   ship.timeRemaining = (ship.timeStamp - Date.now()) / 1000;
   //debugger;
 
   if (ship.timeRemaining <= 0) {
     clearInterval(ship.timer);
-    completedBuild(ship);
+    shipBuildComplete(ship);
     console.log(`Clear ${ship.shipName} timer`);
     return;
   }
@@ -67,7 +79,7 @@ function buildShip(ship) {
     ship.cardTimeRemElement.textContent = `Time Remaining: ${Math.round(ship.timeRemaining)} secs`;
   }
 }
-function completedBuild(ship) {
+function shipBuildComplete(ship) {
   debugger;
   ship.cardTimeRemElement.textContent = `Time Remaining: Completed`;
   let shipButton = $(`#btn-${ship.shipName}`)
@@ -75,18 +87,6 @@ function completedBuild(ship) {
   shipButton.prop("disabled", true);
   ship.timeRemaining = 0;
 
-}
-function shipBuildStart(name) {
-  for (let i = 0; i < ships.length; i++) {
-    if (ships[i].shipName === name) {
-      console.log(`Found ${ships[i].shipName}`);
-      ships[i].timeStamp = Date.now() + ships[i].timeRequired;
-      console.log(`Time Stamp: ${ships[i].timeStamp} Current Time: ${currentTime} Difference: ${ships[i].timeStamp - currentTime}`);
-      ships[i].timer = setInterval(buildShip, 1000, ships[i]);
-      return
-    }
-    console.log("Ship Not Found");
-  }
 }
 function init() {
   ships.push(new Ship('Hotspur', 20000));
