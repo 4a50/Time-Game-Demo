@@ -3,14 +3,7 @@ let ships = [];
 let cardDeck = $("#card-deck");
 let currentTime = new Date(); // milliseconds once updated
 //TODO: Calculate all times in milliseconds.
-function clockDisplay() {
-  let clockElement = $("#time-display");
-  let now = new Date();
-  currentTime = Date.now();
-  let time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-  clockElement.text(time);
-  setInterval(clockDisplay, 1000);
-}
+
 
 function Ship(shipName, timeReq = 10000) {
   this.shipName = shipName;
@@ -20,7 +13,7 @@ function Ship(shipName, timeReq = 10000) {
   this.cardTimeRemElement = document.createElement('h6');
   this.card = this.createCard();
   this.startTime = 0;
-  this.timer;
+  this.intervalSet = null;
 }
 Ship.prototype.createCard = function () {
   let column = document.createElement("div");
@@ -44,57 +37,63 @@ Ship.prototype.createCard = function () {
   cardDescription.className = 'card-text';
   cardBody.append(cardDescription);
   let cardButton = document.createElement('button');
-  cardButton.textContent = `Start Building(${this.timeRequired} sec required)`;
+  cardButton.textContent = `Start Building (${this.timeRequired / 1000}s required)`;
   cardButton.id = `btn-${this.shipName}`;
   cardButton.className = 'btn btn-primary';
   cardBody.append(cardButton);
   column.append(card)
   return column;
 }
-function shipBuildStart(name) {
+Ship.prototype.shipBuildComplete = function () {
+  this.cardTimeRemElement.textContent = `Time Remaining: Completed`;
+  let shipButton = $(`#btn-${this.shipName}`)
+  shipButton.text(`Build Complete`);
+  shipButton.prop("disabled", true);
+  this.timeRemaining = 0;
+
+}
+//unsure why the prototype function will scope to Window instead of the object.
+let shipBuild = function (ship) {
+  ship.timeRemaining = (ship.timeStamp - Date.now()) / 1000;
+  if (ship.timeRemaining <= 0) {
+    clearInterval(ship.intervalSet);
+    ship.shipBuildComplete();
+    console.log(`Cleared ${ship.shipName} timer`);
+  }
+  else {
+    ship.cardTimeRemElement.textContent = `Time Remaining: ${Math.round(ship.timeRemaining)} secs`;
+  }
+}
+function findShipToBuild(name) {
   for (let i = 0; i < ships.length; i++) {
     if (ships[i].shipName === name) {
       console.log(`Found ${ships[i].shipName}`);
       ships[i].timeStamp = Date.now() + ships[i].timeRequired;
+      ships[i].intervalSet = setInterval(shipBuild, 1000, ships[i]);
       console.log(`Time Stamp: ${ships[i].timeStamp} Current Time: ${currentTime} Difference: ${ships[i].timeStamp - currentTime}`);
-      ships[i].timer = setInterval(shipBuild, 1000, ships[i]);
       return
     }
-    console.log("Ship Not Found");
   }
+  console.log("Ship Not Found");
 }
-function shipBuild(ship) {
-  //debugger;
-  ship.timeRemaining = (ship.timeStamp - Date.now()) / 1000;
-  //debugger;
-
-  if (ship.timeRemaining <= 0) {
-    clearInterval(ship.timer);
-    shipBuildComplete(ship);
-    console.log(`Clear ${ship.shipName} timer`);
-    return;
-  }
-  else {
-
-    ship.cardTimeRemElement.textContent = `Time Remaining: ${Math.round(ship.timeRemaining)} secs`;
-  }
-}
-function shipBuildComplete(ship) {
-  debugger;
-  ship.cardTimeRemElement.textContent = `Time Remaining: Completed`;
-  let shipButton = $(`#btn-${ship.shipName}`)
-  shipButton.text(`Build Complete`);
-  shipButton.prop("disabled", true);
-  ship.timeRemaining = 0;
-
+function clockDisplay() {
+  let clockElement = $("#time-display");
+  let now = new Date()
+  currentTime = Date.now();
+  let timeString = now.toString().substring(24, 16);
+  console.log(timeString);
+  let time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+  clockElement.text(timeString);
 }
 function init() {
   ships.push(new Ship('Hotspur', 20000));
   ships.push(new Ship('Enterprise', 5000));
+  ships.push(new Ship('Arwing', 45000));
   for (let i = 0; i < ships.length; i++) {
     cardDeck.append(ships[i].card);
   }
-  clockDisplay();
+  let clockControl = setInterval(clockDisplay, 1000);
+
 }
 //Event Listener
 
@@ -103,7 +102,7 @@ $('.btn').click((e) => {
   let idTag = e.target.id
   let splitIdString = idTag.split("-");
   console.log(splitIdString[1]);
-  shipBuildStart(splitIdString[1]);
+  findShipToBuild(splitIdString[1]);
   e.target.textContent = 'Build in Progress';
 });
 
