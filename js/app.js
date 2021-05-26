@@ -1,9 +1,8 @@
 'use strict'
 let ships = [];
-let cardDeck = $("#card-deck");
+let cardDeck = document.querySelector('#card-deck');
+let eventArray = [];
 let currentTime = new Date(); // milliseconds once updated
-//TODO: Calculate all times in milliseconds.
-
 
 function Ship(shipName, timeReq = 10000) {
   this.shipName = shipName;
@@ -11,9 +10,11 @@ function Ship(shipName, timeReq = 10000) {
   this.timeRemaining = this.timeRequired;
   this.timeStamp = currentTime + timeReq;
   this.cardTimeRemElement = document.createElement('h6');
+  this.button = document.createElement('button');
   this.card = this.createCard();
   this.startTime = 0;
   this.intervalSet = null;
+  eventArray.push(this.button);
 }
 Ship.prototype.createCard = function () {
   let column = document.createElement("div");
@@ -36,7 +37,7 @@ Ship.prototype.createCard = function () {
   cardDescription.textContent = `This is the ${this.shipName}`;
   cardDescription.className = 'card-text';
   cardBody.append(cardDescription);
-  let cardButton = document.createElement('button');
+  let cardButton = this.button;
   cardButton.textContent = `Start Building (${this.timeRequired / 1000}s required)`;
   cardButton.id = `btn-${this.shipName}`;
   cardButton.className = 'btn btn-primary';
@@ -46,9 +47,10 @@ Ship.prototype.createCard = function () {
 }
 Ship.prototype.shipBuildComplete = function () {
   this.cardTimeRemElement.textContent = `Time Remaining: Completed`;
-  let shipButton = $(`#btn-${this.shipName}`)
-  shipButton.text(`Build Complete`);
-  shipButton.prop("disabled", true);
+  //let shipButton = $(`#btn-${this.shipName}`)
+  let shipButton = document.querySelector(`#btn-${this.shipName}`);
+  shipButton.textContent = `Build Complete`;
+  shipButton.disabled = true;
   this.timeRemaining = 0;
 
 }
@@ -77,13 +79,11 @@ function findShipToBuild(name) {
   console.log("Ship Not Found");
 }
 function clockDisplay() {
-  let clockElement = $("#time-display");
+  let clockElement = document.querySelector("#time-display");
   let now = new Date()
   currentTime = Date.now();
   let timeString = now.toString().substring(24, 16);
-  console.log(timeString);
-  let time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-  clockElement.text(timeString);
+  clockElement.textContent = timeString;
 }
 function init() {
   ships.push(new Ship('Hotspur', 20000));
@@ -91,6 +91,7 @@ function init() {
   ships.push(new Ship('Arwing', 45000));
   for (let i = 0; i < ships.length; i++) {
     cardDeck.append(ships[i].card);
+    ships[i].button.addEventListener('click', buildEvent);
   }
   let clockControl = setInterval(clockDisplay, 1000);
 
@@ -98,11 +99,12 @@ function init() {
 //Event Listener
 
 init();
-$('.btn').click((e) => {
+function buildEvent(e) {
   let idTag = e.target.id
   let splitIdString = idTag.split("-");
   console.log(splitIdString[1]);
   findShipToBuild(splitIdString[1]);
   e.target.textContent = 'Build in Progress';
-});
+}
+
 
