@@ -13,7 +13,7 @@ function Ship(shipName, timeReq = 10000) {
   this.cardTimeRemElement = document.createElement('h6');
   this.card = this.createCard();
   this.startTime = 0;
-  this.timer = 0;
+  this.intervalSet = null;
 }
 Ship.prototype.createCard = function () {
   let column = document.createElement("div");
@@ -44,21 +44,6 @@ Ship.prototype.createCard = function () {
   column.append(card)
   return column;
 }
-Ship.prototype.shipBuild = function () {
-
-  this.timeRemaining = (this.timeStamp - Date.now()) / 1000;
-  if (this.timeRemaining <= 0) {
-    clearInterval(this.timer);
-    debugger;
-    this.shipBuildComplete();
-    console.log(`Clear ${this.shipName} timer`);
-    return;
-  }
-  else {
-    console.log('heartbeat');
-    this.cardTimeRemElement.textContent = `Time Remaining: ${Math.round(this.timeRemaining)} secs`;
-  }
-}
 Ship.prototype.shipBuildComplete = function () {
   this.cardTimeRemElement.textContent = `Time Remaining: Completed`;
   let shipButton = $(`#btn-${this.shipName}`)
@@ -67,14 +52,25 @@ Ship.prototype.shipBuildComplete = function () {
   this.timeRemaining = 0;
 
 }
+//unsure why the prototype function will scope to Window instead of the object.
+let shipBuild = function (ship) {
+  ship.timeRemaining = (ship.timeStamp - Date.now()) / 1000;
+  if (ship.timeRemaining <= 0) {
+    clearInterval(ship.intervalSet);
+    ship.shipBuildComplete();
+    console.log(`Cleared ${ship.shipName} timer`);
+  }
+  else {
+    ship.cardTimeRemElement.textContent = `Time Remaining: ${Math.round(ship.timeRemaining)} secs`;
+  }
+}
 function findShipToBuild(name) {
   for (let i = 0; i < ships.length; i++) {
     if (ships[i].shipName === name) {
       console.log(`Found ${ships[i].shipName}`);
       ships[i].timeStamp = Date.now() + ships[i].timeRequired;
+      ships[i].intervalSet = setInterval(shipBuild, 1000, ships[i]);
       console.log(`Time Stamp: ${ships[i].timeStamp} Current Time: ${currentTime} Difference: ${ships[i].timeStamp - currentTime}`);
-      debugger;
-      ships[i].timer = setInterval(ships[i].shipBuild(), 1000);
       return
     }
   }
@@ -82,11 +78,12 @@ function findShipToBuild(name) {
 }
 function clockDisplay() {
   let clockElement = $("#time-display");
-  let now = new Date();
+  let now = new Date()
   currentTime = Date.now();
+  let timeString = now.toString().substring(24, 16);
+  console.log(timeString);
   let time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-  clockElement.text(time);
-  setInterval(clockDisplay, 1000);
+  clockElement.text(timeString);
 }
 function init() {
   ships.push(new Ship('Hotspur', 20000));
@@ -95,7 +92,8 @@ function init() {
   for (let i = 0; i < ships.length; i++) {
     cardDeck.append(ships[i].card);
   }
-  clockDisplay();
+  let clockControl = setInterval(clockDisplay, 1000);
+
 }
 //Event Listener
 
