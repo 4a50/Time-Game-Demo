@@ -3,6 +3,7 @@ let ships = [];
 let cardDeck = document.querySelector('#card-deck');
 let eventArray = [];
 let currentTime = new Date(); // milliseconds once updated
+let armadaArray = [];
 
 function Ship(shipName, timeReq = 10000) {
   this.shipName = shipName;
@@ -18,7 +19,7 @@ function Ship(shipName, timeReq = 10000) {
 }
 Ship.prototype.createCard = function () {
   let column = document.createElement("div");
-  column.className = `col-sm-6`;
+  column.className = `col-sm-4`;
   let card = document.createElement("div");
   card.id = `${this.shipName}`;
   card.className = 'card';
@@ -29,7 +30,6 @@ Ship.prototype.createCard = function () {
   cardTitle.className = `card-title`;
   cardTitle.textContent = this.shipName;
   cardBody.append(cardTitle);
-
   this.cardTimeRemElement.textContent = 'Time Remaining';
   this.cardTimeRemElement.className = 'card-subtitle mb-2 text-muted';
   cardBody.append(this.cardTimeRemElement);
@@ -52,6 +52,7 @@ Ship.prototype.shipBuildComplete = function () {
   shipButton.textContent = `Build Complete`;
   shipButton.disabled = true;
   this.timeRemaining = 0;
+  document.querySelector('#armada-card-deck').append(this.card);
 
 }
 //unsure why the prototype function will scope to Window instead of the object.
@@ -106,5 +107,4 @@ function buildEvent(e) {
   findShipToBuild(splitIdString[1]);
   e.target.textContent = 'Build in Progress';
 }
-
 
