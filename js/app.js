@@ -5,8 +5,9 @@ let eventArray = [];
 let currentTime = new Date(); // milliseconds once updated
 let armadaArray = [];
 
-function Ship(shipName, timeReq = 10000) {
+function Ship(shipName, className = 'Generic', timeReq = 10000) {
   this.shipName = shipName;
+  this.className = className
   this.timeRequired = timeReq; //in milliseconds
   this.timeRemaining = this.timeRequired;
   this.timeStamp = currentTime + timeReq;
@@ -18,32 +19,42 @@ function Ship(shipName, timeReq = 10000) {
   eventArray.push(this.button);
 }
 Ship.prototype.createCard = function () {
-  let column = document.createElement("div");
-  column.className = `col-sm-4`;
+  let cardElement = document.createElement("div");
+  cardElement.className = `col-sm-4`;
   let card = document.createElement("div");
   card.id = `${this.shipName}`;
   card.className = 'card';
   let cardBody = document.createElement("div");
   cardBody.className = 'card-body';
   card.append(cardBody);
+
+
   let cardTitle = document.createElement('h5');
   cardTitle.className = `card-title`;
   cardTitle.textContent = this.shipName;
   cardBody.append(cardTitle);
+
+  let cardClass = document.createElement("h6");
+  cardClass.className = 'card-subTitle';
+  cardClass.textContent = `Class: ${this.className}`;
+  cardBody.append(cardClass);
+
   this.cardTimeRemElement.textContent = 'Time Remaining';
   this.cardTimeRemElement.className = 'card-subtitle mb-2 text-muted';
   cardBody.append(this.cardTimeRemElement);
+
   let cardDescription = document.createElement('p');
   cardDescription.textContent = `This is the ${this.shipName}`;
   cardDescription.className = 'card-text';
   cardBody.append(cardDescription);
+
   let cardButton = this.button;
   cardButton.textContent = `Start Building (${this.timeRequired / 1000}s required)`;
   cardButton.id = `btn-${this.shipName}`;
   cardButton.className = 'btn btn-primary';
   cardBody.append(cardButton);
-  column.append(card)
-  return column;
+  cardElement.append(card)
+  return cardElement;
 }
 Ship.prototype.shipBuildComplete = function () {
   this.cardTimeRemElement.textContent = `Time Remaining: Completed`;
@@ -52,6 +63,7 @@ Ship.prototype.shipBuildComplete = function () {
   shipButton.textContent = `Build Complete`;
   shipButton.disabled = true;
   this.timeRemaining = 0;
+
   document.querySelector('#armada-card-deck').append(this.card);
 
 }
@@ -87,9 +99,9 @@ function clockDisplay() {
   clockElement.textContent = timeString;
 }
 function init() {
-  ships.push(new Ship('Hotspur', 20000));
-  ships.push(new Ship('Enterprise', 5000));
-  ships.push(new Ship('Arwing', 45000));
+  ships.push(new Ship('Hotspur', 'Destroyer', 4000));
+  ships.push(new Ship('Enterprise', 'Constitution', 5000));
+  ships.push(new Ship('FoxTail', 'Arwing', 2000));
   for (let i = 0; i < ships.length; i++) {
     cardDeck.append(ships[i].card);
     ships[i].button.addEventListener('click', buildEvent);
