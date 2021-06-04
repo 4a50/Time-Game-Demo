@@ -9,7 +9,7 @@ body {
 }
 .card-img-top{
   max-width: 100px;
-  max-height: 101px;
+  max-height: 101px;  
 }
 .card {
  background-color: rgba(45, 45, 45, .8);
