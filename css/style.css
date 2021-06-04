@@ -1,3 +1,41 @@
+/* font-family: 'Audiowide', cursive;
+font-family: 'Orbitron', sans-serif;
+font-family: 'Teko', sans-serif; */
+
+body {
+  background-image: url("/assets/parallax-space-backgound-ALL.png");  
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.card-img-top{
+  max-width: 100px;
+  max-height: 101px;
+}
+.card {
+ background-color: rgba(45, 45, 45, .8);
+}
+
+h1, h2 {
+  font-family: 'Audiowide';
+  color: yellow;
+  opacity: 2;
+}
+h5 {
+  color:yellow;
+
+}
+h4, h6, p{
+  color: white;
+  font-family: Orbitron;
+  opacity: 1.0;
+}
+.btn {
+  font-family: Orbitron;
+  background-color: green;
+  color: white;
+  border-color: red;
+  
+}
 .row{
   padding: 0rem 1rem;
 }

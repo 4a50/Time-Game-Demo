@@ -4,10 +4,16 @@ let cardDeck = document.querySelector('#card-deck');
 let eventArray = [];
 let currentTime = new Date(); // milliseconds once updated
 let armadaArray = [];
+const ShipColor = {
+  RED: 'RedShip.png',
+  BLUE: 'BlueShip.png',
+  GREEN: 'GreenShip.png'
+};
 
-function Ship(shipName, className = 'Generic', timeReq = 10000) {
+function Ship(shipName, className = 'Generic', shipColor = ShipColor.RED, timeReq = 10000) {
   this.shipName = shipName;
   this.className = className
+  this.shipColor = shipColor;
   this.timeRequired = timeReq; //in milliseconds
   this.timeRemaining = this.timeRequired;
   this.timeStamp = currentTime + timeReq;
@@ -28,19 +34,23 @@ Ship.prototype.createCard = function () {
   cardBody.className = 'card-body';
   card.append(cardBody);
 
+  let cardImageCap = document.createElement('img');
+  cardImageCap.className = 'card-img-top mx-auto d-block';
+  cardImageCap.src = `/assets/${this.shipColor}`;
+  cardBody.append(cardImageCap);
 
-  let cardTitle = document.createElement('h5');
+  let cardTitle = document.createElement('h4');
   cardTitle.className = `card-title`;
   cardTitle.textContent = this.shipName;
   cardBody.append(cardTitle);
 
-  let cardClass = document.createElement("h6");
+  let cardClass = document.createElement('h5');
   cardClass.className = 'card-subTitle';
   cardClass.textContent = `Class: ${this.className}`;
   cardBody.append(cardClass);
 
   this.cardTimeRemElement.textContent = 'Time Remaining';
-  this.cardTimeRemElement.className = 'card-subtitle mb-2 text-muted';
+  this.cardTimeRemElement.className = 'card-subtitle mb-2';
   cardBody.append(this.cardTimeRemElement);
 
   let cardDescription = document.createElement('p');
@@ -99,9 +109,9 @@ function clockDisplay() {
   clockElement.textContent = timeString;
 }
 function init() {
-  ships.push(new Ship('Hotspur', 'Destroyer', 4000));
-  ships.push(new Ship('Enterprise', 'Constitution', 5000));
-  ships.push(new Ship('FoxTail', 'Arwing', 2000));
+  ships.push(new Ship('Hotspur', 'Destroyer', ShipColor.RED, 4000));
+  ships.push(new Ship('Enterprise', 'Constitution', ShipColor.BLUE, 5000));
+  ships.push(new Ship('FoxTail', 'Arwing', ShipColor.GREEN, 2000));
   for (let i = 0; i < ships.length; i++) {
     cardDeck.append(ships[i].card);
     ships[i].button.addEventListener('click', buildEvent);
