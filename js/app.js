@@ -15,29 +15,33 @@ function Ship(shipName, className = 'Generic', shipColor = ShipColor.RED, timeRe
   this.className = className
   this.shipColor = shipColor;
   this.timeRequired = timeReq; //in milliseconds
-  this.timeRemaining = this.timeRequired;
-  this.timeStamp = currentTime + timeReq;
   this.cardTimeRemElement = document.createElement('h6');
   this.button = document.createElement('button');
   this.card = this.createCard();
+  //STOP HERE
+  this.timeRemaining = this.timeRequired;
+  this.timeStamp = currentTime + timeReq;
   this.startTime = 0;
   this.intervalSet = null;
   eventArray.push(this.button);
 }
 Ship.prototype.createCard = function () {
-  let cardElement = document.createElement("div");
-  cardElement.className = `col-sm-4`;
+  let columnCardContainer = document.createElement("div");
+  columnCardContainer.className = `col-sm-4`;
+
   let card = document.createElement("div");
   card.id = `${this.shipName}`;
   card.className = 'card';
+
   let cardBody = document.createElement("div");
   cardBody.className = 'card-body';
   card.append(cardBody);
 
-  let cardImageCap = document.createElement('img');
-  cardImageCap.className = 'card-img-top mx-auto d-block';
-  cardImageCap.src = `/assets/${this.shipColor}`;
-  cardBody.append(cardImageCap);
+  //Come back to me later.  Final styling.
+  // let cardImageCap = document.createElement('img');
+  // cardImageCap.className = 'card-img-top mx-auto d-block';
+  // cardImageCap.src = `/assets/${this.shipColor}`;
+  // cardBody.append(cardImageCap);
 
   let cardTitle = document.createElement('h4');
   cardTitle.className = `card-title`;
@@ -63,8 +67,8 @@ Ship.prototype.createCard = function () {
   cardButton.id = `btn-${this.shipName}`;
   cardButton.className = 'btn btn-primary';
   cardBody.append(cardButton);
-  cardElement.append(card)
-  return cardElement;
+  columnCardContainer.append(card)
+  return columnCardContainer;
 }
 Ship.prototype.shipBuildComplete = function () {
   this.cardTimeRemElement.textContent = `Time Remaining: Completed`;
@@ -101,6 +105,8 @@ function findShipToBuild(name) {
   }
   console.log("Ship Not Found");
 }
+//"Wed Jun 09 2021 11:56:37 GMT-0700 (Pacific Daylight Time)"
+
 function clockDisplay() {
   let clockElement = document.querySelector("#time-display");
   let now = new Date()
@@ -112,12 +118,15 @@ function init() {
   ships.push(new Ship('Hotspur', 'Destroyer', ShipColor.RED, 4000));
   ships.push(new Ship('Enterprise', 'Constitution', ShipColor.BLUE, 5000));
   ships.push(new Ship('FoxTail', 'Arwing', ShipColor.GREEN, 2000));
+  render();
+
+  let clockControl = setInterval(clockDisplay, 1000);
+}
+function render() {
   for (let i = 0; i < ships.length; i++) {
     cardDeck.append(ships[i].card);
     ships[i].button.addEventListener('click', buildEvent);
   }
-  let clockControl = setInterval(clockDisplay, 1000);
-
 }
 //Event Listener
 
