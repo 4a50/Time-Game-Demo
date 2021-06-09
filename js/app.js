@@ -1,6 +1,6 @@
 'use strict'
 let ships = [];
-let cardDeck = document.querySelector('#card-deck');
+let cardDeck = document.querySelector('#shipyard-card-deck');
 let eventArray = [];
 let currentTime = new Date(); // milliseconds once updated
 let armadaArray = [];
@@ -23,7 +23,8 @@ function Ship(shipName, className = 'Generic', shipColor = ShipColor.RED, timeRe
   this.timeStamp = currentTime + timeReq;
   this.startTime = 0;
   this.intervalSet = null;
-  eventArray.push(this.button);
+  ships.push(this);
+  //eventArray.push(this.button);
 }
 Ship.prototype.createCard = function () {
   let columnCardContainer = document.createElement("div");
@@ -37,11 +38,6 @@ Ship.prototype.createCard = function () {
   cardBody.className = 'card-body';
   card.append(cardBody);
 
-  //Come back to me later.  Final styling.
-  // let cardImageCap = document.createElement('img');
-  // cardImageCap.className = 'card-img-top mx-auto d-block';
-  // cardImageCap.src = `/assets/${this.shipColor}`;
-  // cardBody.append(cardImageCap);
 
   let cardTitle = document.createElement('h4');
   cardTitle.className = `card-title`;
@@ -69,6 +65,11 @@ Ship.prototype.createCard = function () {
   cardBody.append(cardButton);
   columnCardContainer.append(card)
   return columnCardContainer;
+  //Come back to me later.  Final styling.
+  // let cardImageCap = document.createElement('img');
+  // cardImageCap.className = 'card-img-top mx-auto d-block';
+  // cardImageCap.src = `/assets/${this.shipColor}`;
+  // cardBody.append(cardImageCap);
 }
 Ship.prototype.shipBuildComplete = function () {
   this.cardTimeRemElement.textContent = `Time Remaining: Completed`;
@@ -115,12 +116,11 @@ function clockDisplay() {
   clockElement.textContent = timeString;
 }
 function init() {
-  ships.push(new Ship('Hotspur', 'Destroyer', ShipColor.RED, 4000));
-  ships.push(new Ship('Enterprise', 'Constitution', ShipColor.BLUE, 5000));
-  ships.push(new Ship('FoxTail', 'Arwing', ShipColor.GREEN, 2000));
+  new Ship('Hotspur', 'Destroyer', ShipColor.RED, 4000);
+  new Ship('Enterprise', 'Constitution', ShipColor.BLUE, 5000);
+  new Ship('FoxTail', 'Arwing', ShipColor.GREEN, 2000);
   render();
-
-  let clockControl = setInterval(clockDisplay, 1000);
+  setInterval(clockDisplay, 1000);
 }
 function render() {
   for (let i = 0; i < ships.length; i++) {
