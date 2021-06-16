@@ -15,7 +15,7 @@ function Ship(shipName, className = 'Generic', shipColor = ShipColor.RED, timeRe
   this.timeRequired = timeReq; //in milliseconds
   this.cardTimeRemElement = document.createElement('h6');
   this.button = document.createElement('button');
-  this.card = this.createCard();  
+  this.card = this.createCard();
   this.timeRemaining = this.timeRequired;
   this.timeStamp = currentTime + timeReq;
   this.startTime = 0;
@@ -36,7 +36,7 @@ Ship.prototype.createCard = function () {
   let cardBody = document.createElement("div");
   cardBody.className = 'card-body';
   card.append(cardBody);
-  
+
   // Come back to me later.  Final styling.
   let cardImageCap = document.createElement('img');
   cardImageCap.className = 'card-img-top mx-auto d-block';
@@ -73,10 +73,10 @@ Ship.prototype.createCard = function () {
   cardButton.className = 'btn btn-primary';
   cardButton.addEventListener('click', buildEvent);
   cardBody.append(cardButton);
-  
+
   //The Card we created with all it's children and appending it to the top parent.
   columnCardContainer.append(card)
-  
+
   //Returning that whole element to be held by the object property
   return columnCardContainer;
 }
@@ -139,6 +139,7 @@ function render() {
 
 init();
 function buildEvent(e) {
+  debugger;
   let idTag = e.target.id
   let splitIdString = idTag.split("-");
   console.log(splitIdString[1]);
